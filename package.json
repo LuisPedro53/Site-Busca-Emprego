@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "verce-build": "npx prisma migrate deploy"
   }
 }
