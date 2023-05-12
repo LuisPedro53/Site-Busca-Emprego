@@ -6,17 +6,21 @@ router.get('/test', (req, res) => {
   res.send('deu certo')
 })
 
+router.get('/add', (req, res) => {
+  res.render('add')
+})
+
 //add job via post
 
 router.post('/add', (req, res) => {
 
-  let { titulo_jobs, salario_jobs, compania, email, new_job, description } = req.body;
+  let { titulo_jobs, salario_jobs, company, email, new_job, description } = req.body;
 
   //insert
   Job.create({
     titulo_jobs,
     salario_jobs,
-    compania,
+    company,
     email,
     new_job,
     description

@@ -4,8 +4,7 @@ const app = express();
 const path = require('path');
 const database = require('../Site-Busca-Emprego/db/connection');
 const bodyParser = require('body-parser');
-
-
+const Job = require('./models/Job');
 const PORT = 3000;
 
 app.listen(PORT, function () {
@@ -20,11 +19,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Define o diretório que contém os templates do Handlebars
 app.set('views', path.join(__dirname, 'views'));
 
-// Registra o Handlebars como o mecanismo de template padrão
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
 
 // Define o mecanismo de template que deve ser usado
 app.set('view engine', 'handlebars');
+
+//static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // Conecta à base de dados
 database
@@ -37,8 +40,17 @@ database
   });
 
 // Define uma rota de teste para a página inicial
-app.get('/', (req, res) => {
-  res.send("Está funcionando 8...");
+app.get('/', function (req, res) {
+  Job.findAll({
+    order: [
+      ['createdAt', 'DESC']
+    ]
+  })
+    .then(jobs => {
+      res.render('index', {
+        jobs
+      });
+    })
 });
 
 
