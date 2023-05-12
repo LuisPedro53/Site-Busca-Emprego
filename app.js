@@ -5,6 +5,8 @@ const path = require('path');
 const database = require('../Site-Busca-Emprego/db/connection');
 const bodyParser = require('body-parser');
 const Job = require('./models/Job');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 const PORT = 3000;
 
 app.listen(PORT, function () {
@@ -41,16 +43,33 @@ database
 
 // Define uma rota de teste para a página inicial
 app.get('/', function (req, res) {
-  Job.findAll({
-    order: [
-      ['createdAt', 'DESC']
-    ]
-  })
-    .then(jobs => {
-      res.render('index', {
-        jobs
-      });
+  let search = req.query.job;
+  let query = '%' + search + '%';
+  if (!search) {
+    Job.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ]
     })
+      .then(jobs => {
+        res.render('index', {
+          jobs
+        });
+      })
+      .catch(err => console.log(err))
+  } else {
+    Job.findAll({
+      where: { titulo_jobs: { [Op.like]: query } },
+      order: [
+        ['createdAt', 'DESC']
+      ]
+    })
+      .then(jobs => {
+        res.render('index', {
+          jobs, search
+        });
+      })
+  }
 });
 
 
